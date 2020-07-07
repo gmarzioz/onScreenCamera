@@ -1,8 +1,10 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtMultimedia 5.4
+import QtMultimedia 5.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.1
+
+
 
 Window {
     id: mainWin
@@ -12,6 +14,7 @@ Window {
     minimumHeight: 240
     minimumWidth: 425
     title: qsTr("onScreenCamera")
+
 
     Camera {
            id: camera1
@@ -33,6 +36,9 @@ Window {
                onResolutionChanged: {camera1.stop(); camera1.start();}
 
            }
+
+
+
        }
 
 
@@ -74,17 +80,30 @@ Window {
 
                     }
                     ListView {
+                        id: cameraModel
                         visible: cameralist1.visible
                         anchors.fill: parent
                         model: QtMultimedia.availableCameras
+
                         delegate: Text {
                             text: modelData.displayName
                             color: "red"
 
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: camera1.deviceId = modelData.deviceId
+                                onClicked: {
+                                    camera1.deviceId = modelData.deviceId;
+                                    cameralist1.visible = false;
+                                    console.log(camera1.imageCapture.supportedResolutions)
+                                    camera1.imageCapture.resolution = camera1.imageCapture.supportedResolutions[0]
+                                    console.log(camera1.imageCapture.supportedResolutions[0])
+
+
+                                    //cameraModel.model = QtMultimedia.availableCameras
+                                }
+
                             }
+
                         }
                     }
 
@@ -106,11 +125,14 @@ Window {
                             id: buttonListCam1m
                             anchors.fill: parent
                             onClicked: {
+                                cameraModel.model = QtMultimedia.availableCameras
+
                                 if (cameralist1.visible == true)
 
                                 cameralist1.visible = false
                                 else
                                     cameralist1.visible = true
+
 
                             }
 
@@ -160,9 +182,11 @@ Window {
                             ListElement { key: "HD - 1280x720"; value: "1280x720"; width: ""; height: "" }
                             ListElement { key: "UHD - 1920x1080"; value: "1920x1080"; width: ""; height: "" }
                             ListElement { key: "4K - 3840x2160"; value: "3840x2160"; width: ""; height: "" }
+
                         }
+
                         onActivated: {
-                            console.log("textRole Changed...")
+                            console.log("Resolution Changed...")
                             camera1.imageCapture.resolution = cbImageQ.currentText
 
 
