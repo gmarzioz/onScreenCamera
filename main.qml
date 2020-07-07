@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtMultimedia 5.4
 import QtGraphicalEffects 1.0
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.1
 
 Window {
     id: mainWin
@@ -61,6 +61,7 @@ Window {
                     VideoOutput {
                         id: cameraPreview1
                         anchors.fill: parent
+                        fillMode: VideoOutput.PreserveAspectCrop
                         source: camera1
 
                     }
@@ -173,7 +174,7 @@ Window {
                             y: 50
                             visible: opzioni.visible
                             text: qsTr("Fullscreen")
-                            display: AbstractButton.IconOnly
+                            //display: AbstractButton.IconOnly
                             onClicked: if(position ==1) {mainWin.showFullScreen()} else{ mainWin.showNormal()}
 
                         }
