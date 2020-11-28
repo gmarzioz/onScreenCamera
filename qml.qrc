@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>opzioni.png</file>
+        <file>MyCam.qml</file>
     </qresource>
 </RCC>
