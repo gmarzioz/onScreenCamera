@@ -29,8 +29,6 @@ Item {
 
     }
 
-
-
     Rectangle{
         id: one
         color: "white"
