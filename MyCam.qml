@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtMultimedia 5.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.1
@@ -23,10 +23,7 @@ Item {
             }
             resolution: cbImageQ.currentText
             onResolutionChanged: {camera1.stop(); camera1.start();}
-
         }
-
-
     }
 
     Rectangle{
@@ -40,8 +37,6 @@ Item {
             text: "Camera 1"
             anchors.centerIn: parent
         }
-
-
 
         Item {
             width: parent.width
@@ -106,14 +101,12 @@ Item {
                             anchors.fill: parent
                             onClicked: {
                                 camera1.deviceId = modelData.deviceId;
+                                camera1.stop(); camera1.start();
                                 cameralist1.visible = false;
-                                console.log("Supported resolution")
-                                console.log(camera1.imageCapture.supportedResolutions[0])
-                                console.log("Auto select resolution:")
-                                camera1.imageCapture.resolution = camera1.imageCapture.supportedResolutions[camera1.imageCapture.supportedResolutions.length - 1]
-                                console.log(camera1.imageCapture.supportedResolutions[0])
 
+                                cameraRes()
 
+                                //console.info(camera1.imageCapture.supportedResolutions[0])
                                 //cameraModel.model = QtMultimedia.availableCameras
                             }
 
@@ -141,16 +134,11 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             cameraModel.model = QtMultimedia.availableCameras
-
                             if (cameralist1.visible == true)
-
                                 cameralist1.visible = false
                             else
                                 cameralist1.visible = true
-
-
                         }
-
                     }
                 }
 
@@ -187,22 +175,21 @@ Item {
                     y: parent.height - height - 100
 
                     textRole: "value"
-                    currentIndex: 2
+                    currentIndex: 0
 
                     visible: opzioni.visible
 
                     model: ListModel {
                         id: modRes
-                        ListElement { key: "WAP - 640x360"; value: "640x360"; width: ""; height: ""}
-                        ListElement { key: "Mobile - 640x480"; value: "640x480"; width: ""; height: ""}
+                        //ListElement { key: "WAP - 640x360"; value: "160x120"; width: ""; height: ""}
+                        /*ListElement { key: "Mobile - 640x480"; value: "640x480"; width: ""; height: ""}
                         ListElement { key: "HD - 1280x720"; value: "1280x720"; width: ""; height: "" }
                         ListElement { key: "UHD - 1920x1080"; value: "1920x1080"; width: ""; height: "" }
                         ListElement { key: "4K - 3840x2160"; value: "3840x2160"; width: ""; height: "" }
-
+                        */
                     }
 
                     onActivated: {
-
                         camera1.imageCapture.resolution = cbImageQ.currentText
                         console.log("Resolution Changed: " + camera1.imageCapture.resolution)
                     }
@@ -214,7 +201,7 @@ Item {
                         visible: opzioni.visible
                         text: qsTr("Fullscreen")
                         //display: AbstractButton.IconOnly
-                        onClicked: if(position ==1) {mainWin.showFullScreen()} else{ mainWin.showNormal()}
+                        onPositionChanged: if(position ==1) {mainWin.showFullScreen()} else{ mainWin.showNormal()}
 
                     }
 
@@ -225,7 +212,7 @@ Item {
                         visible: opzioni.visible
                         text: qsTr("Mirror")
                         //display: AbstractButton.IconOnly
-                        onClicked: flipable.flipped = !flipable.flipped
+                        onPositionChanged: flipable.flipped = !flipable.flipped
                     }
 
                 }
@@ -259,6 +246,33 @@ Item {
         camera1.imageCapture.resolution = camera1.imageCapture.supportedResolutions[camera1.imageCapture.supportedResolutions.length - 1]
         console.log(camera1.imageCapture.supportedResolutions[camera1.imageCapture.supportedResolutions.length - 1])
         console.log("Camera lock status:" + camera1.lockStatus)
+        cameraRes()
 
+    }
+
+    Shortcut{sequence: "c" ; onActivated: cameralist1.visible = !cameralist1.visible}
+    Shortcut{sequence: "o" ; onActivated: opzioni.visible = !opzioni.visible}
+    Shortcut{sequence: "f" ; onActivated: fullScreen.position = !fullScreen.position}
+    Shortcut{sequence: "m" ; onActivated: mirror.position = !mirror.position}
+    Shortcut{sequence: "q" ; onActivated: Qt.quit()}
+
+    function cameraRes (){
+        console.info("Supported resolution")
+        console.info(camera1.imageCapture.supportedResolutions)
+        //console.info(camera1.imageCapture.supportedResolutions[0])
+
+        //camera1.imageCapture.resolution = Qt.size(640, 480)
+        console.info("Auto select resolution:")
+        console.info(camera1.imageCapture.resolution)
+        //camera1.imageCapture.resolution = camera1.imageCapture.supportedResolutions[camera1.imageCapture.supportedResolutions.length - 1]
+        console.info("CAMARA RESOLUTION CHECK")
+        modRes.clear()
+        for (var i = 0; i < camera1.imageCapture.supportedResolutions.length; i++){
+            var mwidth = camera1.imageCapture.supportedResolutions[i].width
+            var mheight = camera1.imageCapture.supportedResolutions[i].height
+            var str = mwidth + "x" + mheight
+            modRes.append({"value": str})
+        }
+        cbImageQ.currentIndex = i - 1
     }
 }
